@@ -1,0 +1,1142 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "title" : "Involved Party Management APIs",
+    "description" : "A group of services that relate to management of an involved parties details",
+    "version" : "v1.0"
+  },
+  "basePath" : "/nem/involved-parties/v1",
+  "schemes" : [ "https" ],
+  "produces" : [ "application/json; charset=utf-8" ],
+  "consumes" : [ "application/json; charset=utf-8" ],
+  "parameters" : {
+    "InvolvedPartyID" : {
+      "in" : "path",
+      "name" : "InvolvedPartyID",
+      "type" : "string",
+      "required" : true,
+      "minLength" : 1,
+      "maxLength" : 20,
+      "pattern" : "^[\\s0-9:\\.]*$",
+      "description" : "The CIS involvedParty ID"
+    },
+    "AdditionalInfo" : {
+      "in" : "header",
+      "name" : "x-AdditionalInfo",
+      "type" : "array",
+      "items" : {
+        "type" : "string",
+        "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+        "minLength" : 0,
+        "maxLength" : 121
+      },
+      "required" : false,
+      "collectionFormat" : "csv",
+      "description" : "The object holds any additional information. The strings should be populated in a name/value pair format as follows. 'name data' for example 'ParentProcessID 66213'. For example x-AdditionalInfo - [\"x-fapi-interaction-id 123456789\", \"ParentProcessID 66213\"]\n\nThe values within the name and value should each meet the below criteria, string max length of 60 pattern of \"^[\\sa-zA-Z0-9,_'\\.\\-]*$\"\n"
+    },
+    "Channel" : {
+      "in" : "header",
+      "name" : "x-Channel",
+      "type" : "string",
+      "minLength" : 0,
+      "maxLength" : 25,
+      "required" : true,
+      "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+      "description" : "Please refer TMS domain 'BusinessTransactionCommunicationChannelCode' for the  list of possible values. Sample Values include\nPOST OFFICE\nINTERNET\nMOBILE\n"
+    },
+    "Channel-alternateIdentifier" : {
+      "in" : "header",
+      "name" : "x-Channel-alternateIdentifier",
+      "type" : "array",
+      "items" : {
+        "type" : "string",
+        "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+        "minLength" : 0,
+        "maxLength" : 121
+      },
+      "required" : false,
+      "collectionFormat" : "csv",
+      "description" : "The object holds the channel alternate identifiers. The strings should be populated in a name/value pair format as follows. 'type identifier' for example [\"MACHINEID 123.123.123.123\", \"CUSTOMERID 1234567891\"].\n\nThe following values are allowed for type\nCASHIERID\nCUSTOMERID\nEMPLOYEEID\nMACHINEID\nTERMINALID\nUSERID\nFUNCTIONALUNITID\n\nthe values within the identifier should meet the below criteria\nstring max length of 60 pattern of \"^[\\sa-zA-Z0-9,_'\\.\\-]*$\"\n"
+    },
+    "VirtualEnvironment" : {
+      "in" : "header",
+      "name" : "x-VirtualEnvironment",
+      "type" : "string",
+      "minLength" : 0,
+      "maxLength" : 20,
+      "required" : false,
+      "pattern" : "^[A-Z0-9,\\.\\-]*$",
+      "description" : "Each channel consumer under test, mandates a unique blend of service provider versions within the NEM. This can be viewed as its target “snapshot” SOA system. This field uniquely identifies the virtual test environment in play.\n\nUsed to support parallel function group testing within one SIT environment.\n\nUsed in combination with other attributes within the GatewayInfo complex type to lookup a unique row entry within a database mapping table; whose column values then facilitate and drive runtime message routing and transformation decisions.\n\nList of possible values include any unique sequence of characters conforming to the pattern stipulated, and should uniquely identify a body of work under test i.e. a function group. Example value of  \"SO2-FunctionGrp2”.\n"
+    },
+    "SchemaVersion" : {
+      "in" : "header",
+      "name" : "x-SchemaVersion",
+      "type" : "string",
+      "enum" : [ "v1.0" ],
+      "required" : false,
+      "pattern" : "^([1-9]|[1-9][0-9])\\.[1-9]??[0-9]$",
+      "description" : "Each service can consume (call) other services within NEM, whether they’re within the same component layer or not. This field uniquely identifies the interface version it wishes to operate against when calling out to a given external (provider) service; when at a given point within its own processing logic.\n\nUsed in combination with other attributes within the GatewayInfo complex type to lookup a unique row entry within a database mapping table; whose column values then facilitate and drive runtime message routing and transformation decisions.\n\nList of possible values include any sequence of characters conforming to the pattern stipulated, and should identify the version of the service being called. Example value of \"1.2”.\n"
+    },
+    "JourneyID" : {
+      "in" : "header",
+      "name" : "x-JourneyID",
+      "type" : "string",
+      "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+      "required" : false,
+      "description" : "A unique identifier populated by the source system"
+    },
+    "SourceSystemID" : {
+      "in" : "header",
+      "name" : "x-SourceSystemID",
+      "type" : "string",
+      "minLength" : 0,
+      "maxLength" : 60,
+      "required" : true,
+      "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+      "description" : "Please refer TMS domain 'BusinessSystemID' for the  list of possible values. Sample Values include\nDISCOVERY\nBASE24\nCIS\n"
+    },
+    "CreateDateTime" : {
+      "in" : "header",
+      "name" : "x-CreateDateTime",
+      "type" : "string",
+      "format" : "date-time",
+      "required" : true,
+      "description" : "'Time stamp associated with creation of the message. The UTC ISO 8601 Date' 'Time format. For example 2017-01-01T00:00:00Z'"
+    },
+    "IPAddress" : {
+      "in" : "header",
+      "name" : "x-IPAddress",
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 39,
+      "pattern" : "^[a-fA-F0-9:\\.]*$",
+      "description" : "The network/internet address passed through by the calling process"
+    }
+  },
+  "responses" : {
+    "400" : {
+      "description" : "Bad Request",
+      "headers" : {
+        "x-JourneyID" : {
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description" : "A unique identifier populated by the source system"
+        },
+        "x-CreateDateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+        }
+      },
+      "schema" : {
+        "$ref" : "#/definitions/ErrorResponseSchema"
+      }
+    },
+    "401" : {
+      "description" : "Unauthorized"
+    },
+    "403" : {
+      "description" : "Forbidden"
+    },
+    "404" : {
+      "description" : "Not Found",
+      "headers" : {
+        "x-JourneyID" : {
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description" : "A unique identifier populated by the source system"
+        },
+        "x-CreateDateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+        }
+      },
+      "schema" : {
+        "$ref" : "#/definitions/ErrorResponseSchema"
+      }
+    },
+    "405" : {
+      "description" : "Method Not Allowed"
+    },
+    "406" : {
+      "description" : "Forbidden"
+    },
+    "409" : {
+      "description" : "Conflict"
+    },
+    "429" : {
+      "description" : "Too Many Requests"
+    },
+    "500" : {
+      "description" : "Internal Server Error",
+      "headers" : {
+        "x-JourneyID" : {
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description" : "A unique identifier populated by the source system"
+        },
+        "x-CreateDateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+        }
+      },
+      "schema" : {
+        "$ref" : "#/definitions/ErrorResponseSchema"
+      }
+    },
+    "503" : {
+      "description" : "Service Unavailable",
+      "headers" : {
+        "x-JourneyID" : {
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description" : "A unique identifier populated by the source system"
+        },
+        "x-CreateDateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+        }
+      },
+      "schema" : {
+        "$ref" : "#/definitions/ErrorResponseSchema"
+      }
+    },
+    "504" : {
+      "description" : "Gateway Timeout",
+      "headers" : {
+        "x-JourneyID" : {
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description" : "A unique identifier populated by the source system"
+        },
+        "x-CreateDateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+        }
+      },
+      "schema" : {
+        "$ref" : "#/definitions/ErrorResponseSchema"
+      }
+    },
+    "ResponsesHeaders" : {
+      "description" : "The response header parameters are common across all NEM resources.",
+      "headers" : {
+        "x-JourneyID" : {
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "description" : "A unique identifier populated by the source system"
+        },
+        "x-CreateDateTime" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+        }
+      }
+    }
+  },
+  "security" : [ {
+    "JWT" : [ ]
+  } ],
+  "paths" : {
+    "/{InvolvedPartyID}" : {
+      "get" : {
+        "summary" : "Get InvolvedParties",
+        "description" : "This service take a CIS ID of an Individual and returns related details stored",
+        "operationId" : "Get",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "x-AdditionalInfo",
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+            "minLength" : 0,
+            "maxLength" : 121
+          },
+          "required" : false,
+          "collectionFormat" : "csv",
+          "description" : "The object holds any additional information. The strings should be populated in a name/value pair format as follows. 'name data' for example 'ParentProcessID 66213'. For example x-AdditionalInfo - [\"x-fapi-interaction-id 123456789\", \"ParentProcessID 66213\"]\n\nThe values within the name and value should each meet the below criteria, string max length of 60 pattern of \"^[\\sa-zA-Z0-9,_'\\.\\-]*$\"\n"
+        }, {
+          "in" : "header",
+          "name" : "x-Channel",
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 25,
+          "required" : true,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+          "description" : "Please refer TMS domain 'BusinessTransactionCommunicationChannelCode' for the  list of possible values. Sample Values include\nPOST OFFICE\nINTERNET\nMOBILE\n"
+        }, {
+          "in" : "header",
+          "name" : "x-Channel-alternateIdentifier",
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+            "minLength" : 0,
+            "maxLength" : 121
+          },
+          "required" : false,
+          "collectionFormat" : "csv",
+          "description" : "The object holds the channel alternate identifiers. The strings should be populated in a name/value pair format as follows. 'type identifier' for example [\"MACHINEID 123.123.123.123\", \"CUSTOMERID 1234567891\"].\n\nThe following values are allowed for type\nCASHIERID\nCUSTOMERID\nEMPLOYEEID\nMACHINEID\nTERMINALID\nUSERID\nFUNCTIONALUNITID\n\nthe values within the identifier should meet the below criteria\nstring max length of 60 pattern of \"^[\\sa-zA-Z0-9,_'\\.\\-]*$\"\n"
+        }, {
+          "in" : "header",
+          "name" : "x-VirtualEnvironment",
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 20,
+          "required" : false,
+          "pattern" : "^[A-Z0-9,\\.\\-]*$",
+          "description" : "Each channel consumer under test, mandates a unique blend of service provider versions within the NEM. This can be viewed as its target “snapshot” SOA system. This field uniquely identifies the virtual test environment in play.\n\nUsed to support parallel function group testing within one SIT environment.\n\nUsed in combination with other attributes within the GatewayInfo complex type to lookup a unique row entry within a database mapping table; whose column values then facilitate and drive runtime message routing and transformation decisions.\n\nList of possible values include any unique sequence of characters conforming to the pattern stipulated, and should uniquely identify a body of work under test i.e. a function group. Example value of  \"SO2-FunctionGrp2”.\n"
+        }, {
+          "in" : "header",
+          "name" : "x-SchemaVersion",
+          "type" : "string",
+          "enum" : [ "v1.0" ],
+          "required" : false,
+          "pattern" : "^([1-9]|[1-9][0-9])\\.[1-9]??[0-9]$",
+          "description" : "Each service can consume (call) other services within NEM, whether they’re within the same component layer or not. This field uniquely identifies the interface version it wishes to operate against when calling out to a given external (provider) service; when at a given point within its own processing logic.\n\nUsed in combination with other attributes within the GatewayInfo complex type to lookup a unique row entry within a database mapping table; whose column values then facilitate and drive runtime message routing and transformation decisions.\n\nList of possible values include any sequence of characters conforming to the pattern stipulated, and should identify the version of the service being called. Example value of \"1.2”.\n"
+        }, {
+          "in" : "header",
+          "name" : "x-JourneyID",
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "required" : false,
+          "description" : "A unique identifier populated by the source system"
+        }, {
+          "in" : "header",
+          "name" : "x-SourceSystemID",
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 60,
+          "required" : true,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+          "description" : "Please refer TMS domain 'BusinessSystemID' for the  list of possible values. Sample Values include\nDISCOVERY\nBASE24\nCIS\n"
+        }, {
+          "in" : "header",
+          "name" : "x-CreateDateTime",
+          "type" : "string",
+          "format" : "date-time",
+          "required" : true,
+          "description" : "'Time stamp associated with creation of the message. The UTC ISO 8601 Date' 'Time format. For example 2017-01-01T00:00:00Z'"
+        }, {
+          "in" : "path",
+          "name" : "InvolvedPartyID",
+          "type" : "string",
+          "required" : true,
+          "minLength" : 1,
+          "maxLength" : 20,
+          "pattern" : "^[\\s0-9:\\.]*$",
+          "description" : "The CIS involvedParty ID"
+        }, {
+          "in" : "header",
+          "name" : "x-IPAddress",
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 39,
+          "pattern" : "^[a-fA-F0-9:\\.]*$",
+          "description" : "The network/internet address passed through by the calling process"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "InvolvedParty Details successfully retrieved.\n",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "title" : "InvolvedParty GET response",
+              "type" : "object",
+              "properties" : {
+                "names" : {
+                  "$ref" : "#/definitions/Name",
+                  "description" : "Object containing name values related to Involved Party"
+                },
+                "dateOfBirth" : {
+                  "$ref" : "#/definitions/Date",
+                  "description" : "date of birth of Involved Party"
+                },
+                "nationality" : {
+                  "description" : "Aka citizenship. The nationality of the Involved Party",
+                  "$ref" : "#/definitions/CountryFourDigit"
+                },
+                "marketingFlags" : {
+                  "description" : "marketing flag settings of Involved Party",
+                  "$ref" : "#/definitions/MarketingFlags"
+                },
+                "softLock" : {
+                  "description" : "Current Softlock Value of Involved Party, must be retained for updates",
+                  "$ref" : "#/definitions/SoftLock"
+                },
+                "taxDeclaration" : {
+                  "description" : "Decloration of tax related to Involved Party",
+                  "$ref" : "#/definitions/TaxDeclaration"
+                },
+                "contactPoints" : {
+                  "description" : "The list of contact points with associated preferences for each",
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/ContactPoint"
+                  }
+                },
+                "iDstatus" : {
+                  "$ref" : "#/definitions/IDStatus"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "403" : {
+            "description" : "Forbidden"
+          },
+          "404" : {
+            "description" : "Not Found",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "503" : {
+            "description" : "Service Unavailable",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "504" : {
+            "description" : "Gateway Timeout",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          }
+        }
+      },
+      "put" : {
+        "summary" : "Put Involved Parties",
+        "description" : "This service takes in data related to an Individual and updates data related to them",
+        "operationId" : "Put",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "x-AdditionalInfo",
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+            "minLength" : 0,
+            "maxLength" : 121
+          },
+          "required" : false,
+          "collectionFormat" : "csv",
+          "description" : "The object holds any additional information. The strings should be populated in a name/value pair format as follows. 'name data' for example 'ParentProcessID 66213'. For example x-AdditionalInfo - [\"x-fapi-interaction-id 123456789\", \"ParentProcessID 66213\"]\n\nThe values within the name and value should each meet the below criteria, string max length of 60 pattern of \"^[\\sa-zA-Z0-9,_'\\.\\-]*$\"\n"
+        }, {
+          "in" : "header",
+          "name" : "x-Channel",
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 25,
+          "required" : true,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+          "description" : "Please refer TMS domain 'BusinessTransactionCommunicationChannelCode' for the  list of possible values. Sample Values include\nPOST OFFICE\nINTERNET\nMOBILE\n"
+        }, {
+          "in" : "header",
+          "name" : "x-Channel-alternateIdentifier",
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+            "minLength" : 0,
+            "maxLength" : 121
+          },
+          "required" : false,
+          "collectionFormat" : "csv",
+          "description" : "The object holds the channel alternate identifiers. The strings should be populated in a name/value pair format as follows. 'type identifier' for example [\"MACHINEID 123.123.123.123\", \"CUSTOMERID 1234567891\"].\n\nThe following values are allowed for type\nCASHIERID\nCUSTOMERID\nEMPLOYEEID\nMACHINEID\nTERMINALID\nUSERID\nFUNCTIONALUNITID\n\nthe values within the identifier should meet the below criteria\nstring max length of 60 pattern of \"^[\\sa-zA-Z0-9,_'\\.\\-]*$\"\n"
+        }, {
+          "in" : "header",
+          "name" : "x-VirtualEnvironment",
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 20,
+          "required" : false,
+          "pattern" : "^[A-Z0-9,\\.\\-]*$",
+          "description" : "Each channel consumer under test, mandates a unique blend of service provider versions within the NEM. This can be viewed as its target “snapshot” SOA system. This field uniquely identifies the virtual test environment in play.\n\nUsed to support parallel function group testing within one SIT environment.\n\nUsed in combination with other attributes within the GatewayInfo complex type to lookup a unique row entry within a database mapping table; whose column values then facilitate and drive runtime message routing and transformation decisions.\n\nList of possible values include any unique sequence of characters conforming to the pattern stipulated, and should uniquely identify a body of work under test i.e. a function group. Example value of  \"SO2-FunctionGrp2”.\n"
+        }, {
+          "in" : "header",
+          "name" : "x-SchemaVersion",
+          "type" : "string",
+          "enum" : [ "v1.0" ],
+          "required" : false,
+          "pattern" : "^([1-9]|[1-9][0-9])\\.[1-9]??[0-9]$",
+          "description" : "Each service can consume (call) other services within NEM, whether they’re within the same component layer or not. This field uniquely identifies the interface version it wishes to operate against when calling out to a given external (provider) service; when at a given point within its own processing logic.\n\nUsed in combination with other attributes within the GatewayInfo complex type to lookup a unique row entry within a database mapping table; whose column values then facilitate and drive runtime message routing and transformation decisions.\n\nList of possible values include any sequence of characters conforming to the pattern stipulated, and should identify the version of the service being called. Example value of \"1.2”.\n"
+        }, {
+          "in" : "header",
+          "name" : "x-JourneyID",
+          "type" : "string",
+          "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+          "required" : false,
+          "description" : "A unique identifier populated by the source system"
+        }, {
+          "in" : "header",
+          "name" : "x-SourceSystemID",
+          "type" : "string",
+          "minLength" : 0,
+          "maxLength" : 60,
+          "required" : true,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]*$",
+          "description" : "Please refer TMS domain 'BusinessSystemID' for the  list of possible values. Sample Values include\nDISCOVERY\nBASE24\nCIS\n"
+        }, {
+          "in" : "header",
+          "name" : "x-CreateDateTime",
+          "type" : "string",
+          "format" : "date-time",
+          "required" : true,
+          "description" : "'Time stamp associated with creation of the message. The UTC ISO 8601 Date' 'Time format. For example 2017-01-01T00:00:00Z'"
+        }, {
+          "in" : "path",
+          "name" : "InvolvedPartyID",
+          "type" : "string",
+          "required" : true,
+          "minLength" : 1,
+          "maxLength" : 20,
+          "pattern" : "^[\\s0-9:\\.]*$",
+          "description" : "The CIS involvedParty ID"
+        }, {
+          "in" : "header",
+          "name" : "x-IPAddress",
+          "type" : "string",
+          "minLength" : 1,
+          "maxLength" : 39,
+          "pattern" : "^[a-fA-F0-9:\\.]*$",
+          "description" : "The network/internet address passed through by the calling process"
+        }, {
+          "name" : "body",
+          "in" : "body",
+          "description" : "Put Involved Party object",
+          "required" : true,
+          "schema" : {
+            "title" : "InvolvedParty PUT schema",
+            "type" : "object",
+            "properties" : {
+              "softLock" : {
+                "$ref" : "#/definitions/SoftLock",
+                "description" : "IP softlock value to make sure latest version of record is passed"
+              },
+              "taxDeclaration" : {
+                "$ref" : "#/definitions/TaxDeclaration"
+              },
+              "marketingFlags" : {
+                "$ref" : "#/definitions/MarketingFlags"
+              },
+              "contactPoints" : {
+                "description" : "The list of contact points with associated preferences for each note that \" \" is not a valid input for the PUT method",
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/ContactPoint"
+                }
+              },
+              "taxRecords" : {
+                "description" : "A list of countries for taxation and FATCA data",
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/TaxRecord"
+                }
+              },
+              "doNotMergeIndicator" : {
+                "$ref" : "#/definitions/DoNotMergeIndicator"
+              }
+            },
+            "required" : [ "softLock" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "InvolvedParty Details successfully updated.",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "title" : "InvolvedParty PUT response",
+              "type" : "object",
+              "properties" : {
+                "softLock" : {
+                  "$ref" : "#/definitions/SoftLock",
+                  "description" : "IP softlock value to make sure latest version of record is  passed"
+                },
+                "contactPoints" : {
+                  "description" : "The list of contact points with associated preferences for each note that \" \" is not a valid input for the PUT method",
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/ContactPointSoftlocks"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "403" : {
+            "description" : "Forbidden"
+          },
+          "404" : {
+            "description" : "Not Found",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "409" : {
+            "description" : "Conflict"
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "503" : {
+            "description" : "Service Unavailable",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          },
+          "504" : {
+            "description" : "Gateway Timeout",
+            "headers" : {
+              "x-JourneyID" : {
+                "type" : "string",
+                "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+                "description" : "A unique identifier populated by the source system"
+              },
+              "x-CreateDateTime" : {
+                "type" : "string",
+                "format" : "date-time",
+                "description" : "Time stamp associated with creation of the message. The UTC ISO 8601 Date Time format. For example 2017-01-01T00:00:00Z"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseSchema"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "JWT" : {
+      "description" : "A JSON Web Token, will be used to send security information by the consumer of API.JWTs will be validated or Created by DataPower.The API is agnostic to the underlying implementation of security.",
+      "name" : "Authorization",
+      "type" : "apiKey",
+      "in" : "header"
+    }
+  },
+  "definitions" : {
+    "InvolvedPartyID" : {
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 20,
+      "pattern" : "^[\\s0-9:\\.]{1,20}$",
+      "description" : "The CIS involvedParty ID"
+    },
+    "Date" : {
+      "description" : "As defined by full-date - RFC3339 YYYY-MM-DD",
+      "type" : "string",
+      "format" : "date"
+    },
+    "Name" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string",
+          "maxLength" : 4,
+          "description" : "Values dervied from TMSII View No. 52",
+          "example" : "01",
+          "pattern" : "^[0-9]{1,4}$"
+        },
+        "firstName" : {
+          "type" : "string",
+          "maxLength" : 15,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-\\&]{1,15}$"
+        },
+        "middleNames" : {
+          "type" : "string",
+          "maxLength" : 60,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-\\&]{1,60}$",
+          "example" : "smith"
+        },
+        "lastName" : {
+          "type" : "string",
+          "maxLength" : 30,
+          "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-\\&]{1,30}$",
+          "example" : "downs"
+        }
+      }
+    },
+    "CountryFourDigit" : {
+      "description" : "this is a 4 digit country code TMS table 188",
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 4,
+      "example" : "0044",
+      "pattern" : "^[0-9]{1,4}$"
+    },
+    "CountryAlpha2" : {
+      "description" : "Value from the ‘InvvdPtyIndivNationality1’TMS Table No: 142",
+      "type" : "string",
+      "minLength" : 2,
+      "maxLength" : 2,
+      "example" : "GB",
+      "pattern" : "^[\\sa-zA-Z0-9-]{2,2}$"
+    },
+    "ContactPoint" : {
+      "description" : "A contact point is typed to either a telephoneNumber, emailAddress, postalAddress using the medium field. Ideally we would use polymorphism here but this is not supported by tooling. Once we support swagger3.0 this model should be updated.\n",
+      "allOf" : [ {
+        "$ref" : "#/definitions/ContactPointSoftlocks"
+      }, {
+        "type" : "object",
+        "properties" : {
+          "startDate" : {
+            "$ref" : "#/definitions/Date"
+          },
+          "endDate" : {
+            "$ref" : "#/definitions/Date"
+          },
+          "telephoneNumber" : {
+            "$ref" : "#/definitions/TelephoneNumber"
+          },
+          "emailAddress" : {
+            "$ref" : "#/definitions/EmailAddress"
+          },
+          "postalAddress" : {
+            "$ref" : "#/definitions/PostalAddress"
+          }
+        },
+        "required" : [ "medium", "startDate" ]
+      } ]
+    },
+    "ContactPointSoftlocks" : {
+      "type" : "object",
+      "description" : "A contact point is typed to either a telephoneNumber, emailAddress, postalAddress using the medium field. Ideally we would use polymorphism here but this is not supported by tooling. Once we support swagger3.0 this model should be updated.\n",
+      "properties" : {
+        "medium" : {
+          "type" : "string",
+          "enum" : [ "Phone", "Postal", "Email" ],
+          "pattern" : "^[\\sa-zA-Z0-9-]{4,10}$"
+        },
+        "softLock" : {
+          "$ref" : "#/definitions/SoftLock"
+        },
+        "rolesoftLock" : {
+          "$ref" : "#/definitions/RoleSoftLock"
+        },
+        "usage" : {
+          "description" : "Identifies the method and destination of a communication contact",
+          "type" : "string",
+          "enum" : [ "Work", "Business", "Primary Residence", "Secondary Residence", "Default" ],
+          "pattern" : "^[\\sa-zA-Z0-9-]{4,30}$"
+        },
+        "phonetype" : {
+          "type" : "string",
+          "enum" : [ "Mobile" ],
+          "pattern" : "^[\\sa-zA-Z0-9-]{1,30}$"
+        }
+      },
+      "required" : [ "softLock", "medium", "usage" ]
+    },
+    "TaxRecord" : {
+      "description" : "object to contain tax records",
+      "type" : "object",
+      "properties" : {
+        "countryCode" : {
+          "$ref" : "#/definitions/CountryAlpha2"
+        },
+        "externalReference" : {
+          "type" : "string",
+          "maxLength" : 20,
+          "pattern" : "^[\\sa-zA-Z0-9-]{1,20}$"
+        },
+        "taxationType" : {
+          "description" : "R = Residential\nC = Citizenship\nD = Not Asked\n",
+          "type" : "string",
+          "enum" : [ "R", "C", "D" ],
+          "pattern" : "^[\\sa-zA-Z0-9-]{1}$"
+        },
+        "startDate" : {
+          "$ref" : "#/definitions/Date"
+        }
+      },
+      "required" : [ "countryCode", "taxationType" ]
+    },
+    "MarketingFlags" : {
+      "description" : "GDPR flags for marketing consent",
+      "type" : "object",
+      "properties" : {
+        "Post" : {
+          "$ref" : "#/definitions/MarketingFlagValues"
+        },
+        "Telephone" : {
+          "$ref" : "#/definitions/MarketingFlagValues"
+        },
+        "Email" : {
+          "$ref" : "#/definitions/MarketingFlagValues"
+        },
+        "Online" : {
+          "$ref" : "#/definitions/MarketingFlagValues"
+        }
+      }
+    },
+    "MarketingFlagValues" : {
+      "type" : "string",
+      "enum" : [ "Y", "N", "?", " " ],
+      "pattern" : "^[\\sa-zA-Z0-9-?]{1}$"
+    },
+    "DoNotMergeIndicator" : {
+      "type" : "string",
+      "description" : "Indicates if record should be merged with similar record or not 'Y' = Do not merge 'N' = Allow merge",
+      "enum" : [ "Y", "N" ],
+      "pattern" : "^[\\sa-zA-Z0-9-]{1}$"
+    },
+    "IDStatus" : {
+      "type" : "string",
+      "description" : "Identification Check Status Value from the IdentificationCheckStatusCode TMS table '1: ID Passed' '2: ID Required' '3: Declined' '4: Referral Outstanding' '5: ID Confirmed' '6: ID Not Confirmed' '7: Refer – Paper Id' '8: Refer – MLRT' '9: Refer – SID' '10: Remote ID' '99: Retro Passed'",
+      "pattern" : "^[\\sa-zA-Z0-9-]{1,4}$",
+      "maxLength" : 4
+    },
+    "SoftLock" : {
+      "type" : "string",
+      "description" : "Softlock used to make sure update is against latest record, must retain and passed for updates",
+      "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]{1,12}$",
+      "example" : 5125908,
+      "maxLength" : 12
+    },
+    "RoleSoftLock" : {
+      "type" : "string",
+      "description" : "Softlock used to make sure update is against latest record, must retain and passed for updates",
+      "pattern" : "^[\\sa-zA-Z0-9,_'\\.\\-]{1,34}$",
+      "example" : 7.387212395942419E23,
+      "maxLength" : 34
+    },
+    "TaxDeclaration" : {
+      "description" : "AKA self-declaration.\nMeaning of value can be taken from TMS 1153, SelfCertificationDeclaration field.\nB=Customer required to declare\nD=Customer has not answered\nN=Non UK citizen and/or pay tax outside of UK\nX=Not Required\nY=Only a UK citizen and only resident in the UK for tax purposes\nSpace=Individual with no in scope products\n",
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 1,
+      "pattern" : "^[\\sa-zA-Z0-9-]{1}$"
+    },
+    "EmailAddress" : {
+      "description" : "Email address aka Electronic Address\n",
+      "type" : "string",
+      "pattern" : "^[a-zA-Z0-9_\\.+-]+@[a-zA-Z0-9-\\.]+\\.[a-zA-Z0-9]{1,100}$",
+      "maxLength" : 100,
+      "example" : "Perter@address.co.uk"
+    },
+    "TelephoneNumber" : {
+      "description" : "Details related to a Fixedline or Mobile number. For GET all fields are available, however for PUT a consumer may only populate localNumber. This value is then passed to the NEM format validation service and passed to the SOR.\n",
+      "type" : "object",
+      "properties" : {
+        "areaCode" : {
+          "type" : "string",
+          "maxLength" : 10,
+          "readOnly" : true,
+          "example" : 2
+        },
+        "countryPhoneCode" : {
+          "type" : "string",
+          "maxLength" : 2,
+          "readOnly" : true,
+          "example" : "0044"
+        },
+        "localNumber" : {
+          "type" : "string",
+          "maxLength" : 100,
+          "pattern" : "^[0-9]{1,100}$",
+          "example" : "123456"
+        }
+      }
+    },
+    "PostalAddress" : {
+      "description" : "Contains an address types and address information populated by data available. Consumer should check to see if BFPO is populate to find type of address. If BFPO is given use fields addressLine1 and and below. Else use other fields",
+      "type" : "object",
+      "properties" : {
+        "unitNumber" : {
+          "type" : "string",
+          "example" : "23"
+        },
+        "buildingNumber" : {
+          "type" : "string",
+          "example" : "34"
+        },
+        "buildingName" : {
+          "type" : "string",
+          "example" : "The downs"
+        },
+        "city" : {
+          "type" : "string",
+          "example" : "Swindon"
+        },
+        "thoroughfareName" : {
+          "type" : "string",
+          "example" : "Hill Street"
+        },
+        "dependentThoroughfareName" : {
+          "type" : "string",
+          "example" : "Pyre Close"
+        },
+        "dependentLocality" : {
+          "type" : "string",
+          "example" : "Bethnal Green"
+        },
+        "doubleDependentLocality" : {
+          "type" : "string",
+          "example" : "Whitehall"
+        },
+        "postalCode" : {
+          "type" : "string",
+          "example" : "SWR 423"
+        },
+        "country" : {
+          "type" : "string",
+          "example" : "GB"
+        },
+        "addressLine1" : {
+          "type" : "string",
+          "example" : "1234123 Captin Pete"
+        },
+        "addressLine2" : {
+          "type" : "string",
+          "example" : "Beta Unit"
+        },
+        "addressLine3" : {
+          "type" : "string",
+          "example" : "Antarctica"
+        },
+        "BFPO" : {
+          "type" : "string"
+        },
+        "unavailableReason" : {
+          "type" : "string",
+          "description" : "TMS table 18",
+          "example" : "123345"
+        }
+      }
+    },
+    "ErrorResponseSchema" : {
+      "type" : "object",
+      "properties" : {
+        "TransactionStatus" : {
+          "title" : "transactionStatus",
+          "type" : "object",
+          "properties" : {
+            "Status" : {
+              "description" : "Overall status of the response.",
+              "type" : "string",
+              "enum" : [ "INVALIDDATA", "PARTIALSUCCESS", "REJECTED", "SUCCESS", "TRANSPORTFAILURE", "PROTOCOLFAILURE", "NOTFOUND" ]
+            },
+            "Result" : {
+              "type" : "object",
+              "properties" : {
+                "Behaviour" : {
+                  "description" : "Instruction to the BPM app support team to advise next steps for this Process Instance. This will not always be returned.",
+                  "type" : "string",
+                  "enum" : [ "ABORT", "CANCOMPENSATE", "CANOVERRIDE", "CANRETRY" ]
+                },
+                "OverallSecurityLevel" : {
+                  "description" : "Maximum severity level of the stack.",
+                  "type" : "string",
+                  "enum" : [ "Error", "Critical", "Warning", "Info" ]
+                }
+              }
+            },
+            "Stack" : {
+              "type" : "array",
+              "items" : {
+                "properties" : {
+                  "Code" : {
+                    "description" : "Used by service consumers to define the error handling code. Each interface specification specifies which errors this service can return.",
+                    "type" : "string",
+                    "minLength" : 1,
+                    "maxLength" : 13
+                  },
+                  "Description" : {
+                    "description" : "Description associated with code, providing a summary of code meaning.",
+                    "type" : "string",
+                    "minLength" : 1,
+                    "maxLength" : 1000
+                  },
+                  "Source" : {
+                    "description" : "Source component for this error - e.g. Service Operation or Process.",
+                    "type" : "string",
+                    "minLength" : 1,
+                    "maxLength" : 256
+                  },
+                  "Severity" : {
+                    "description" : "Severity level. A critical error requires further data remediation - e.g. in the Systems of Record.",
+                    "type" : "string",
+                    "enum" : [ "Error", "Critical", "Warning", "Info" ]
+                  },
+                  "Category" : {
+                    "description" : "Further categorisation. OUTCOMEUNKNOWN/PARTIALFAILURE/TIMEOUT may require data integrity investigation.",
+                    "type" : "string",
+                    "enum" : [ "COMPLETEFAILURE", "INPUTERROR", "OUTCOMEUNKNOWN", "PARTIALFAILURE", "TIMEOUT" ]
+                  },
+                  "Context" : {
+                    "description" : "Original stack element, typically the error response from a System of Record.",
+                    "type" : "string"
+                  }
+                },
+                "required" : [ "Code" ]
+              }
+            }
+          },
+          "required" : [ "Status" ]
+        }
+      },
+      "additionalProperties" : false
+    }
+  }
+}

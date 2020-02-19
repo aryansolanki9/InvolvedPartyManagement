@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ComIbmCompute.msgnode="ComIbmCompute.msgnode" xmlns:Logger_createLog.subflow="Logger/createLog.subflow" xmlns:com_ibm_connector_loopback_ComIbmRequest.msgnode="com/ibm/connector/loopback/ComIbmRequest.msgnode" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:eflow="http://www.ibm.com/wbi/2005/eflow" xmlns:utility="http://www.ibm.com/wbi/2005/eflow_utility" nsURI="Get.subflow" nsPrefix="Get.subflow">
+  <eClassifiers xmi:type="eflow:FCMComposite" name="FCMComposite_1">
+    <eSuperTypes href="http://www.ibm.com/wbi/2005/eflow#//FCMBlock"/>
+    <translation xmi:type="utility:TranslatableString" key="Get" bundleName="Get" pluginId="InvolvedPartyManagement"/>
+    <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/InvolvedPartyManagement/icons/full/obj16/Get.gif"/>
+    <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/InvolvedPartyManagement/icons/full/obj30/Get.gif"/>
+    <composition>
+      <nodes xmi:type="eflow:FCMSink" xmi:id="Output1" location="1009,227">
+        <translation xmi:type="utility:TranslatableString" key="Output1" bundleName="Get" pluginId="InvolvedPartyManagement"/>
+      </nodes>
+      <nodes xmi:type="Logger_createLog.subflow:FCMComposite_1" xmi:id="FCMComposite_1_1" location="392,130" logPosition="P2">
+        <translation xmi:type="utility:ConstantString" string="P"/>
+      </nodes>
+      <nodes xmi:type="eflow:FCMSource" xmi:id="Input1" location="106,221">
+        <translation xmi:type="utility:TranslatableString" key="Input1" bundleName="Get" pluginId="InvolvedPartyManagement"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="737,226" computeExpression="esql://routine/gen#InvolvedParties_Response.Main">
+        <translation xmi:type="utility:ConstantString" string="InvolvedParties_Response"/>
+      </nodes>
+      <nodes xmi:type="com_ibm_connector_loopback_ComIbmRequest.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_3" location="499,222" connectorName="iib-loopback-connector" dataSource="mongodb" object="involvedparties" operation="retrieve" timeoutMilliseconds="120000" dataLocation="$Body" outputDataLocation="$OutputRoot" copyToLocalEnv="true" messageDomainProperty="JSON">
+        <translation xmi:type="utility:ConstantString" string="LoopBackRequest"/>
+      </nodes>
+      <nodes xmi:type="Logger_createLog.subflow:FCMComposite_1" xmi:id="FCMComposite_1_4" location="678,125" logPosition="P3" logLevel="debug">
+        <translation xmi:type="utility:ConstantString" string="P1"/>
+      </nodes>
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_5" location="210,221" computeExpression="esql://routine/gen#InvolvedParties_Get.Main" computeMode="destination">
+        <translation xmi:type="utility:ConstantString" string="InvolvedParties_Get"/>
+      </nodes>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_1" targetNode="FCMComposite_1_5" sourceNode="Input1" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_2" targetNode="FCMComposite_1_3" sourceNode="FCMComposite_1_1" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_3" targetNode="FCMComposite_1_4" sourceNode="FCMComposite_1_3" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_4" targetNode="FCMComposite_1_2" sourceNode="FCMComposite_1_4" sourceTerminalName="OutTerminal.Output" targetTerminalName="InTerminal.in"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_5" targetNode="FCMComposite_1_1" sourceNode="FCMComposite_1_5" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.Input"/>
+      <connections xmi:type="eflow:FCMConnection" xmi:id="FCMConnection_6" targetNode="Output1" sourceNode="FCMComposite_1_2" sourceTerminalName="OutTerminal.out" targetTerminalName="InTerminal.in"/>
+    </composition>
+    <propertyOrganizer/>
+    <stickyBoard/>
+  </eClassifiers>
+</ecore:EPackage>

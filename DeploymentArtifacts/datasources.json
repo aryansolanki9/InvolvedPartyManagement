@@ -1,0 +1,9 @@
+{
+	"mongodb": {
+		"host": "mongo-service",
+		"port": 27017,
+		"database": "involvedparties",
+		"name": "mongodb",
+		"connector": "mongodb"
+	}
+}

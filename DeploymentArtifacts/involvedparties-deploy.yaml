@@ -1,0 +1,33 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+    labels:
+    app: involvedparties
+    version: v1
+    name: involvedparties
+    namespace: test-poc
+spec:
+  replicas: 2
+  selector:
+    app: involvedparties
+    version: v1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true'
+      creationTimestamp: null
+      labels:
+        app: involvedparties
+        version: v1
+    spec:
+      containers:
+        - env:
+            - name: LICENSE
+              value: accept
+          image: 'us.icr.io/sisspace/involvedpartymanagement_v1:1.0'
+          imagePullPolicy: IfNotPresent
+          name: involvedparties
+          ports:
+            - containerPort: 7800
+              name: http
+              protocol: TCP

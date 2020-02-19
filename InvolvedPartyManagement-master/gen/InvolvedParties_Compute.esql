@@ -1,0 +1,37 @@
+BROKER SCHEMA gen
+
+
+CREATE COMPUTE MODULE InvolvedParties_Get
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		--Changed 556666768898
+				
+		--SET Environment.InvolvedPartyId = InputLocalEnvironment.HTTP.Input.Path.Segment[4];
+		--SET OutputLocalEnvironment=InputLocalEnvironment;
+		--SET OutputLocalEnvironment.Destination.Loopback.Request.id = InputLocalEnvironment.HTTP.Input.Path.Segment[4];
+		
+		SET OutputLocalEnvironment=InputLocalEnvironment;
+        SET OutputLocalEnvironment.Destination.Loopback.Request.externalIdName = 'involvedPartyId';
+        SET OutputLocalEnvironment.Destination.Loopback.Request.externalId = InputLocalEnvironment.REST.Input.Parameters.InvolvedPartyID;
+	END;
+END MODULE;
+
+CREATE COMPUTE MODULE InvolvedParties_Response
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		SET OutputRoot.Properties=InputRoot.Properties;
+		SET OutputRoot.Properties.ContentType = 'application/json;charset = utf-8';
+		SET OutputRoot.Properties.CodedCharSetId = '1208';
+		SET OutputLocalEnvironment = InputLocalEnvironment;
+
+		DECLARE refToOut	REFERENCE TO OutputRoot;
+		IF EXISTS(InputRoot.JSON.Data.*[]) THEN
+			SET OutputRoot.JSON.Data = InputRoot.JSON.Data;
+		ELSE
+		THROW USER EXCEPTION VALUES('No Data found error');
+
+		END IF;
+		RETURN TRUE;
+	END;
+END MODULE;
+

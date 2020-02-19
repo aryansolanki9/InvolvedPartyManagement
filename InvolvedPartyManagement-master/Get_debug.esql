@@ -1,0 +1,9 @@
+
+
+CREATE COMPUTE MODULE Get_debug
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		SET OutputRoot.XMLNSC.A = Environment;
+	END;
+END MODULE;

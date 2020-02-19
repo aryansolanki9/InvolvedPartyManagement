@@ -1,0 +1,9 @@
+FROM ibmcom/ace-mq:latest
+
+ENV BAR1=InvolvedPartyManagement_V2.bar
+
+COPY $BAR1 /tmp
+
+COPY datasources.json /home/aceuser/ace-server/config/connectors/loopback/datasources.json
+
+RUN bash -c "cd /home/aceuser/ace-server && npm install loopback-connector-mongodb --save && mqsibar -w /home/aceuser/ace-server -a /tmp/$BAR1 -c"
